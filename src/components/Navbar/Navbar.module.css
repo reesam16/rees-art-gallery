@@ -1,0 +1,94 @@
+.navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    background: rgba(4, 247, 158, 0.423);
+    height: 4.25em;
+    padding: 1em 0;
+}
+
+.nav-logo {
+    height: 2em;
+}
+
+.nav-menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+}
+
+.nav-menu .button {
+    border-radius: 0.2em;
+    background-color: #5099d086;
+    padding: .75em 2em;
+    width: 150px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.nav-menu .button:hover {
+    background-color: #5099d0dd;
+}
+
+.link {
+    color: rgb(244, 238, 233);
+    font-family: "Funnel Sans", sans-serif;
+    font-weight: 100;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+/* This styles the link when you are on that specific page */
+.link:global(.active) {
+    color: #6366f1; /* Matches your submit button color! */
+    border-bottom: .5px solid #6366f1;
+    font-weight: bold;
+}
+
+/* Hamburger Styles */
+.hamburger {
+    display: none;
+    cursor: pointer;
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    border-radius: 5px;
+    margin: 5px auto;
+    transition: all 0.5s ease-in-out;
+    background-color: #50bbd0;
+}
+
+/* Mobile Media Query */
+@media (max-width: 900px) {
+    .hamburger {
+        display: block;
+    }
+
+    /* Transform burger into an X */
+    .hamburger.active .bar:nth-child(2) { opacity: 0; }
+    .hamburger.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    .nav-menu {
+        position: fixed;
+        right: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: #262626;
+        width: 100%;
+        transition: 0.5s;
+        padding: 2em 0;
+    }
+
+    .nav-menu.active {
+        right: 0;
+    }
+}

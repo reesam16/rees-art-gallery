@@ -1,0 +1,27 @@
+/* .shopPage {
+    padding: 100px 20px;
+    text-align: center;
+    min-height: 80vh;
+} */
+.productGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .shopHeader {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #f9f9f9;
+  }
+  /* src/pages/Shop/Shop.module.css */
+
+.shopContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+

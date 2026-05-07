@@ -1,0 +1,194 @@
+.hero {  
+    height: 700px;
+    max-width: 1200px;
+    box-shadow: 2px 1px 15px rgba(0, 0, 0, 0.223);
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    text-align: center;
+}
+
+.hero-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .6em;
+}
+
+.full-icon {
+    height: 10em;
+    width: auto;
+}
+
+.name {
+    font-family: "Funnel Sans", sans-serif;
+    font-weight: 100;
+    text-transform: uppercase;
+    letter-spacing: .8em;
+    padding-left: 15px;
+}
+
+.grid-container {
+    display: grid;
+    max-width: 1200px;
+    padding: 2em 0;
+    margin: 0 auto;
+    gap: .5em;
+    grid-template-rows: 300px 2fr;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas: 
+    "c1 c1"
+    "c2 c3";
+}
+
+.cont1{
+    display: block;
+    padding: 2em 0;
+    overflow: hidden; 
+    width: 100%;
+    background-color: #dbd7cf36;
+}
+
+/* Category Cards */
+.cont2, .cont3 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: .5em;
+    padding: 10em 2em;
+    text-decoration: none;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.3s;
+}
+
+.c1{
+    grid-area: c1;
+}
+
+.c2 { 
+    grid-area: c2; 
+    background-color: #10d085;
+    /* You can add the specific gallery preview images here as backgrounds if you like */
+}
+.c3 { grid-area: c3; }
+
+.heading h3 {
+    color: white;
+    font-weight: 100;
+    letter-spacing: 5px;
+    transition: transform 0.4s ease;
+}
+
+.heading h3:hover {
+   transform: scale(1.2);
+}
+
+/* Slider Styles */
+.slider-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 50px;
+}
+
+.slider-window { overflow: hidden; width: 100%; }
+
+.slider-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out; 
+    gap: 2px;
+}
+
+.slider-track img {
+    flex: 0 0 33%; 
+    height: 250px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.prev-btn, .next-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.slider-container:hover .prev-btn,
+.slider-container:hover .next-btn {
+    opacity: 1;
+}
+
+.prev-btn { left: 0; }
+.next-btn { right: 0; }
+
+
+/* --- Mobile Adaptation --- */
+@media(max-width: 768px){
+    .slider-track img{
+        flex: 0 0 100%;
+    }
+    .slider-track{
+        gap:0;
+    }
+    .slider-container{
+        padding: 0 30px;
+    }
+    .prev-btn, .next-btn{
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+@media (max-width: 900px){
+
+    .hero{
+        height: 400px;
+        background-size: cover;
+        text-align: center;
+    }
+    
+    .hero img{
+        height: 5em;
+    }
+    .name{
+        display: none;
+    }
+
+    .grid-container{
+        display: grid;
+        max-width: 1400px;
+        padding: 2em 0;
+        margin: 0 auto;
+        height: auto;
+        gap: .5em;
+        /* grid-template-rows: repeat(3, 1fr); */
+        grid-template-rows: auto auto auto;
+        grid-template-columns: repeat(1, 1fr);
+        grid-template-areas: 
+        "c1 "
+        "c2 "
+        "c3"
+        ;
+    } 
+}

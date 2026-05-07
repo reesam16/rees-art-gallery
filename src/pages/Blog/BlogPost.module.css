@@ -1,0 +1,65 @@
+.fullPost {
+    max-width: 800px; /* Narrower than the list view for better readability */
+    margin: 120px auto 60px; /* Space for navbar */
+    padding: 0 20px;
+    font-family: "Funnel Sans", sans-serif;
+}
+
+.backLink {
+    text-decoration: none;
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+}
+
+.backLink:hover {
+    color: black;
+}
+
+.header {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    text-align: center;
+}
+
+.date {
+    font-size: 0.9rem;
+    color: #999;
+    text-transform: uppercase;
+}
+
+.header h1 {
+    font-family: 'Lexend Giga', sans-serif;
+    font-weight: 100;
+    font-size: 2.5rem;
+    margin-top: 0.3em;
+    text-transform: uppercase;
+}
+
+.heroImage {
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain; /* Shows the full painting without cropping */
+    background-color: #f9f9f9; /* Subtle backdrop if image is smaller */
+    margin-bottom: 3em;
+    border-radius: 4px;
+}
+
+.content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.content p {
+    margin-bottom: 1.5em;
+}
+
+/* --- Mobile View --- */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 1.8rem;
+    }
+}

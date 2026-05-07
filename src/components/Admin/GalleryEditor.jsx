@@ -1,0 +1,134 @@
+import { useState, useEffect } from 'react';
+import formStyles from './AdminForm.module.css';
+
+function GalleryEditor() {
+    const [art, setArt] = useState({
+        title: '',
+        medium: '',
+        dimensions: '',
+        price: '',
+        image: null,
+        imagePreview: null
+    });
+
+    const [allArt, setAllArt] = useState([]);
+
+    useEffect(() => {
+        const saved = JSON.parse(localStorage.getItem('galleryItems')) || [];
+        setAllArt(saved);
+    }, []);
+
+        // ADDED THIS FUNCTION
+        const deleteArt = (indexToDelete) => {
+            const updated = allArt.filter((_, index) => index !== indexToDelete);
+            localStorage.setItem('galleryItems', JSON.stringify(updated));
+            setAllArt(updated);
+        };
+
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setArt(prev => ({ ...prev, image: reader.result, imagePreview: reader.result }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log("Attempting to save painting..."); // This will show in the console
+
+        try {
+            const existing = JSON.parse(localStorage.getItem('galleryItems')) || [];
+
+            // We create a clean object to save
+            const newEntry = {
+                id: Date.now(),
+                title: art.title,
+                medium: art.medium,
+                dimensions: art.dimensions,
+                price: art.price,
+                image: art.image,
+                imagePreview: art.image // This is the base64 string from the reader
+            };
+
+            const updated = [newEntry, ...existing];
+            localStorage.setItem('galleryItems', JSON.stringify(updated));
+
+            setAllArt(updated);
+            setArt({ 
+                title: '', 
+                medium: '',
+                dimensions: '', 
+                price: '', 
+                image: null, 
+                imagePreview: null });
+            alert("Success! Check Local Storage now.");
+        } catch (err) {
+            console.error("Save failed:", err);
+            alert("Could not save. The image might be too large.");
+        }
+    };
+
+    return (
+        <div className={formStyles.adminSectionWrapper}>
+            <form className={formStyles.editorForm} onSubmit={handleSubmit}>
+                <h3>Add to Gallery</h3>
+
+                <input type="file" onChange={handleImageChange} accept="image/*" />
+                {art.imagePreview && <img src={art.imagePreview} className={formStyles.previewImage} alt="Preview" />}
+
+                <input
+                    type="text"
+                    placeholder="Painting Title"
+                    value={art.title}
+                    onChange={(e) => setArt({ ...art, title: e.target.value })}
+                />
+
+                <input
+                    type="text"
+                    placeholder="Medium (e.g. Oil on Canvas)"
+                    value={art.medium}
+                    onChange={(e) => setArt({ ...art, medium: e.target.value })}
+                />
+                <input
+                    type="text"
+                    placeholder="8X10"
+                    value={art.dimensions}
+                    onChange={(e) => setArt({ ...art, dimensions: e.target.value })}
+                />
+
+                <input
+                    type="number"
+                    placeholder="Price"
+                    value={art.price}
+                    onChange={(e) => setArt({ ...art, price: e.target.value })}
+                />
+
+                <button type="submit" className={formStyles.saveBtn}>Add to Gallery</button>
+            </form>
+
+            <div className={formStyles.recentPosts}>
+                <h3 className={formStyles.recentTitle}>Manage Uploaded Paintings</h3>
+                <div className={formStyles.postGrid}>
+                    {allArt.map((p, index) => (
+                        <div key={index} className={formStyles.miniCard}>
+                        {p.imagePreview && <img src={p.imagePreview} alt="" />}
+                        <h4>{p.title}</h4>
+                        <p>{p.medium} {p.dimensions && `(${p.dimensions})`}</p> {/* Shows size in parens */}
+                        <p>${p.price}</p>
+                        <button onClick={() => deleteArt(index)} className={formStyles.deleteBtn}>
+                            Delete
+                        </button>
+                    </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default GalleryEditor;
