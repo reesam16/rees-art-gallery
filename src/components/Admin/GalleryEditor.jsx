@@ -18,12 +18,12 @@ function GalleryEditor() {
         setAllArt(saved);
     }, []);
 
-        // ADDED THIS FUNCTION
-        const deleteArt = (indexToDelete) => {
-            const updated = allArt.filter((_, index) => index !== indexToDelete);
-            localStorage.setItem('galleryItems', JSON.stringify(updated));
-            setAllArt(updated);
-        };
+    // ADDED THIS FUNCTION
+    const deleteArt = (indexToDelete) => {
+        const updated = allArt.filter((_, index) => index !== indexToDelete);
+        localStorage.setItem('galleryItems', JSON.stringify(updated));
+        setAllArt(updated);
+    };
 
 
     const handleImageChange = (e) => {
@@ -59,13 +59,14 @@ function GalleryEditor() {
             localStorage.setItem('galleryItems', JSON.stringify(updated));
 
             setAllArt(updated);
-            setArt({ 
-                title: '', 
+            setArt({
+                title: '',
                 medium: '',
-                dimensions: '', 
-                price: '', 
-                image: null, 
-                imagePreview: null });
+                dimensions: '',
+                price: '',
+                image: null,
+                imagePreview: null
+            });
             alert("Success! Check Local Storage now.");
         } catch (err) {
             console.error("Save failed:", err);
@@ -76,37 +77,71 @@ function GalleryEditor() {
     return (
         <div className={formStyles.adminSectionWrapper}>
             <form className={formStyles.editorForm} onSubmit={handleSubmit}>
-                <h3>Add to Gallery</h3>
+                <h3 className={formStyles.recentTitle}>Add to Gallery</h3>
 
-                <input type="file" onChange={handleImageChange} accept="image/*" />
-                {art.imagePreview && <img src={art.imagePreview} className={formStyles.previewImage} alt="Preview" />}
+                {/* IMAGE UPLOAD SECTION */}
+                <div className={formStyles.inputGroup}>
+                    <label className={formStyles.label}>Painting Image</label>
+                    <div className={formStyles.imageUploadWrapper}>
+                        {art.imagePreview && (
+                            <img src={art.imagePreview} alt="Preview" className={formStyles.previewImage} />
+                        )}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className={formStyles.fileInput}
+                        />
+                    </div>
+                </div>
 
-                <input
-                    type="text"
-                    placeholder="Painting Title"
-                    value={art.title}
-                    onChange={(e) => setArt({ ...art, title: e.target.value })}
-                />
+                {/* TITLE SECTION */}
+                <div className={formStyles.inputGroup}>
+                    <label className={formStyles.label}>Painting Title</label>
+                    <input
+                        className={formStyles.input}
+                        type="text"
+                        placeholder="e.g. Sunset in Tampa"
+                        value={art.title}
+                        onChange={(e) => setArt({ ...art, title: e.target.value })}
+                    />
+                </div>
 
-                <input
-                    type="text"
-                    placeholder="Medium (e.g. Oil on Canvas)"
-                    value={art.medium}
-                    onChange={(e) => setArt({ ...art, medium: e.target.value })}
-                />
-                <input
-                    type="text"
-                    placeholder="8X10"
-                    value={art.dimensions}
-                    onChange={(e) => setArt({ ...art, dimensions: e.target.value })}
-                />
+                {/* MEDIUM SECTION */}
+                <div className={formStyles.inputGroup}>
+                    <label className={formStyles.label}>Medium</label>
+                    <input
+                        className={formStyles.input}
+                        type="text"
+                        placeholder="e.g. Oil on Canvas"
+                        value={art.medium}
+                        onChange={(e) => setArt({ ...art, medium: e.target.value })}
+                    />
+                </div>
 
-                <input
-                    type="number"
-                    placeholder="Price"
-                    value={art.price}
-                    onChange={(e) => setArt({ ...art, price: e.target.value })}
-                />
+                {/* DIMENSIONS SECTION */}
+                <div className={formStyles.inputGroup}>
+                    <label className={formStyles.label}>Dimensions</label>
+                    <input
+                        className={formStyles.input}
+                        type="text"
+                        placeholder="e.g. 8x10"
+                        value={art.dimensions}
+                        onChange={(e) => setArt({ ...art, dimensions: e.target.value })}
+                    />
+                </div>
+
+                {/* PRICE SECTION */}
+                <div className={formStyles.inputGroup}>
+                    <label className={formStyles.label}>Price ($)</label>
+                    <input
+                        className={formStyles.input}
+                        type="number"
+                        placeholder="0.00"
+                        value={art.price}
+                        onChange={(e) => setArt({ ...art, price: e.target.value })}
+                    />
+                </div>
 
                 <button type="submit" className={formStyles.saveBtn}>Add to Gallery</button>
             </form>
@@ -116,14 +151,14 @@ function GalleryEditor() {
                 <div className={formStyles.postGrid}>
                     {allArt.map((p, index) => (
                         <div key={index} className={formStyles.miniCard}>
-                        {p.imagePreview && <img src={p.imagePreview} alt="" />}
-                        <h4>{p.title}</h4>
-                        <p>{p.medium} {p.dimensions && `(${p.dimensions})`}</p> {/* Shows size in parens */}
-                        <p>${p.price}</p>
-                        <button onClick={() => deleteArt(index)} className={formStyles.deleteBtn}>
-                            Delete
-                        </button>
-                    </div>
+                            {p.imagePreview && <img src={p.imagePreview} alt="" />}
+                            <h4>{p.title}</h4>
+                            <p>{p.medium} {p.dimensions && `(${p.dimensions})`}</p> {/* Shows size in parens */}
+                            <p>${p.price}</p>
+                            <button onClick={() => deleteArt(index)} className={formStyles.deleteBtn}>
+                                Delete
+                            </button>
+                        </div>
                     ))}
                 </div>
             </div>

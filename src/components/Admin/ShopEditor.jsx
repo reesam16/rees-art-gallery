@@ -52,33 +52,93 @@ function ShopEditor() {
 
     return (
         <div className={formStyles.adminSectionWrapper}>
-            <form className={formStyles.editorForm} onSubmit={handleSubmit}>
-                <h3>Add New Shop Item</h3>
-                <input type="file" onChange={handleImageChange} accept="image/*" />
-                {item.imagePreview && <img src={item.imagePreview} className={formStyles.previewImage} alt="Preview" />}
-                
-                <input type="text" placeholder="Title" value={item.title} onChange={e => setItem({...item, title: e.target.value})} />
-                <input type="text" placeholder="Medium" value={item.medium} onChange={e => setItem({...item, medium: e.target.value})} />
-                <input type="text" placeholder="Dimensions" value={item.dimensions} onChange={e => setItem({...item, dimensions: e.target.value})} />
-                <input type="number" placeholder="Price" value={item.price} onChange={e => setItem({...item, price: e.target.value})} />
-                
-                <button type="submit" className={formStyles.saveBtn}>List Item</button>
-            </form>
+    <form className={formStyles.editorForm} onSubmit={handleSubmit}>
+        <h3 className={formStyles.recentTitle}>Add New Shop Item</h3>
 
-            <div className={formStyles.recentPosts}>
-                <h3>Manage Shop Inventory</h3>
-                <div className={formStyles.postGrid}>
-                    {allShopItems.map((i) => (
-                        <div key={i.id} className={formStyles.miniCard}>
-                            <img src={i.imagePreview || i.image} alt="" />
-                            <h4>{i.title}</h4>
-                            <p>${i.price}</p>
-                            <button onClick={() => deleteItem(i.id)} className={formStyles.deleteBtn}>Remove</button>
-                        </div>
-                    ))}
-                </div>
+        {/* IMAGE SECTION */}
+        <div className={formStyles.inputGroup}>
+            <label className={formStyles.label}>Product Image</label>
+            <div className={formStyles.imageUploadWrapper}>
+                {item.imagePreview && (
+                    <img src={item.imagePreview} className={formStyles.previewImage} alt="Preview" />
+                )}
+                <input 
+                    type="file" 
+                    onChange={handleImageChange} 
+                    accept="image/*" 
+                    className={formStyles.fileInput}
+                />
             </div>
         </div>
+
+        {/* TITLE SECTION */}
+        <div className={formStyles.inputGroup}>
+            <label className={formStyles.label}>Item Title</label>
+            <input 
+                type="text" 
+                className={formStyles.input}
+                placeholder="e.g. Original Oil Study" 
+                value={item.title} 
+                onChange={e => setItem({...item, title: e.target.value})} 
+            />
+        </div>
+
+        {/* MEDIUM SECTION */}
+        <div className={formStyles.inputGroup}>
+            <label className={formStyles.label}>Medium</label>
+            <input 
+                type="text" 
+                className={formStyles.input}
+                placeholder="Oil on Wood Panel" 
+                value={item.medium} 
+                onChange={e => setItem({...item, medium: e.target.value})} 
+            />
+        </div>
+
+        {/* ROW FOR DIMENSIONS & PRICE */}
+        <div className={formStyles.formRow} style={{ display: 'flex', gap: '20px' }}>
+            <div className={formStyles.inputGroup} style={{ flex: 1 }}>
+                <label className={formStyles.label}>Size</label>
+                <input 
+                    type="text" 
+                    className={formStyles.input}
+                    placeholder="11x14" 
+                    value={item.dimensions} 
+                    onChange={e => setItem({...item, dimensions: e.target.value})} 
+                />
+            </div>
+            <div className={formStyles.inputGroup} style={{ flex: 1 }}>
+                <label className={formStyles.label}>Price ($)</label>
+                <input 
+                    type="number" 
+                    className={formStyles.input}
+                    placeholder="0.00" 
+                    value={item.price} 
+                    onChange={e => setItem({...item, price: e.target.value})} 
+                />
+            </div>
+        </div>
+
+        <button type="submit" className={formStyles.saveBtn}>List Item</button>
+    </form>
+
+    {/* INVENTORY MANAGEMENT SECTION */}
+    <div className={formStyles.recentPosts}>
+        <h3 className={formStyles.recentTitle}>Manage Shop Inventory</h3>
+        <div className={formStyles.postGrid}>
+            {allShopItems.map((i) => (
+                <div key={i.id} className={formStyles.miniCard}>
+                    <img src={i.imagePreview || i.image} alt={i.title} />
+                    <h4>{i.title}</h4>
+                    <p>${i.price}</p>
+                    <button onClick={() => deleteItem(i.id)} className={formStyles.deleteBtn}>
+                        Remove Item
+                    </button>
+                </div>
+            ))}
+        </div>
+    </div>
+</div>
     );
 }
 
