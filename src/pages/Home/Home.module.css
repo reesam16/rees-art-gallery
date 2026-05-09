@@ -77,11 +77,20 @@
 .c2 { 
     grid-area: c2; 
     background-color: #10d085;
-    /* You can add the specific gallery preview images here as backgrounds if you like */
 }
 .c3 { grid-area: c3; }
 .c4 { grid-area: c4; }
 .c5 { grid-area: c5; }
+
+.heading{
+    
+    transition: background-image 0.3s ease;
+}
+
+.heading:hover {
+    /* When hovering, remove the gradient layer by just showing the image */
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), var(--bg-image);
+  }
 
 .heading h3 {
     color: white;
@@ -92,6 +101,7 @@
 
 .heading h3:hover {
    transform: scale(1.2);
+   background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), var(--bg-image);
 }
 
 /* Slider Styles */

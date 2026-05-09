@@ -2,7 +2,13 @@ import { useState, useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom'; 
 import { paintings as staticPaintings } from '../../paintingsData';
 import styles from './Gallery.module.css';
-import heroImage from '../../assets/vcp-photo.jpg';
+// import heroImage from '../../assets/vcp-photo.jpg';
+
+import landscapeHero from '../../assets/paintings/ncw9.jpg'; 
+import stillLifeHero from '../../assets/paintings/slw1.jpg';
+import portraitHero from '../../assets/paintings/mcw2.jpg';
+import figureHero from '../../assets/paintings/fgw9.jpg';
+import defaultHero from '../../assets/vcp-photo.jpg'; // Your fallback
 
 function Gallery() {
   const [allPaintings, setAllPaintings] = useState([]);
@@ -12,16 +18,26 @@ function Gallery() {
 
     // 1. Grab the current URL location
     const location = useLocation(); 
+    // GET THE TYPE FIRST
+    const type = searchParams.get('type');
+
+    const heroMap = {
+      'landscapes': landscapeHero,
+      'still-life': stillLifeHero,
+      'portraits': portraitHero,
+      'figures': figureHero
+    };
+    // Select the image based on the URL type, or use the default
+    const currentHero = heroMap[type] || defaultHero;
 
     // --- NEW: TITLE MAPPING ---
-    const type = searchParams.get('type');
+    
     const titleMap = {
       'landscapes': 'Landscape Collection',
       'still-life': 'Still Life Collection',
       'portraits': 'Portrait Collection',
       'figures': 'Figure Collection'
     };
-  
     // Fallback to 'Full Gallery' if no type is selected
     const displayTitle = titleMap[type] || 'Full Gallery';
 
@@ -79,7 +95,7 @@ function Gallery() {
         backgroundImage: `
           linear-gradient(rgba(4, 239, 247, 0.128), transparent 80%), 
           linear-gradient(0deg, #f7f2e89b, transparent 90%),
-          url(${heroImage})
+          url(${currentHero})
         ` }}>
         {/* The Admin Login Toggle from the Blog */}
         <button onClick={() => setIsAdmin(!isAdmin)} className={styles.adminToggle}>

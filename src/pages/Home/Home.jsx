@@ -11,14 +11,14 @@ import slide3 from '../../assets/paintings/mcw3.jpg';
 import slide4 from '../../assets/paintings/mcw4.jpg';
 import slide5 from '../../assets/paintings/mcw5.jpg';
 // 1. Add these imports at the top
-import card1Bg from '../../assets/paintings/ncw9.jpg';
-import card2Bg from '../../assets/paintings/ncw12.jpg';
+// import card1Bg from '../../assets/paintings/ncw9.jpg';
+// import card2Bg from '../../assets/paintings/ncw12.jpg';
 
 // ADD THESE: Import the images you want to use for the 4 boxes
 import landscapeBg from '../../assets/paintings/ncw9.jpg'; // or whatever image you want
-import stillLifeBg from '../../assets/paintings/ncw12.jpg'; 
-import portraitBg from '../../assets/paintings/mcw1.jpg';   // placeholder image
-import figureBg from '../../assets/paintings/mcw2.jpg';     //
+import stillLifeBg from '../../assets/paintings/slw4.jpg'; 
+import portraitBg from '../../assets/paintings/pw7.jpg';   // placeholder image
+import figureBg from '../../assets/paintings/fgw1.jpg';     //
 
 function Home() {
   const [sliderIndex, setSliderIndex] = useState(0);
@@ -102,7 +102,7 @@ function Home() {
   <Link
     to="/gallery?type=landscapes"
     className={`${styles.c2} ${styles.cont2} ${styles.heading}`}
-    style={{ backgroundImage: `url(${landscapeBg})` }}
+    style={{ backgroundImage: ` linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${landscapeBg})` }}
   >
     <h3>Landscape Collection</h3>
   </Link>
@@ -110,7 +110,7 @@ function Home() {
   <Link
     to="/gallery?type=still-life"
     className={`${styles.c3} ${styles.cont3} ${styles.heading}`}
-    style={{ backgroundImage: `url(${stillLifeBg})` }}
+    style={{ backgroundImage: `linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${stillLifeBg})` }}
   >
     <h3>Still Life</h3>
   </Link>
@@ -118,7 +118,7 @@ function Home() {
   <Link
     to="/gallery?type=portraits"
     className={`${styles.c4} ${styles.cont4} ${styles.heading}`}
-    style={{ backgroundImage: `url(${portraitBg})` }}
+    style={{ backgroundImage: `linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${portraitBg})` }}
   >
     <h3>Portraits</h3>
   </Link>
@@ -126,7 +126,7 @@ function Home() {
   <Link
     to="/gallery?type=figures"
     className={`${styles.c5} ${styles.cont5} ${styles.heading}`}
-    style={{ backgroundImage: `url(${figureBg})` }}
+    style={{ backgroundImage: `linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${figureBg})` }}
   >
     <h3>Figure Collection</h3>
   </Link>
