@@ -41,7 +41,8 @@
 .footer-links a:hover {
     color: #5099d0;
 }
-.footer-links a:global(.active) {
+.footer-links a:global(.active),
+.footer-links a.active {
     color: #5099d0;
     font-weight: bold;
 }

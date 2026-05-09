@@ -50,6 +50,13 @@
     font-weight: bold;
 }
 
+/* This targets both NavLinks AND our custom active <a> tag */
+.link.active {
+    color: #6366f1; /* Matches your submit button color! */
+    border-bottom: .5px solid #6366f1;
+    font-weight: bold;
+}
+
 /* Hamburger Styles */
 .hamburger {
     display: none;

@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'; // Added useEffect
+import { useState, useEffect } from 'react'; 
+import { useLocation, useSearchParams } from 'react-router-dom'; 
 import { paintings as staticPaintings } from '../../paintingsData';
 import styles from './Gallery.module.css';
 import heroImage from '../../assets/vcp-photo.jpg';
@@ -7,16 +8,46 @@ function Gallery() {
   const [allPaintings, setAllPaintings] = useState([]);
   const [indexLb, setIndexLb] = useState(-1);
   const [isAdmin, setIsAdmin] = useState(false); // Same as Blog
+  const [searchParams] = useSearchParams();
+
+    // 1. Grab the current URL location
+    const location = useLocation(); 
+
+    // --- NEW: TITLE MAPPING ---
+    const type = searchParams.get('type');
+    const titleMap = {
+      'landscapes': 'Landscape Collection',
+      'still-life': 'Still Life Collection',
+      'portraits': 'Portrait Collection',
+      'figures': 'Figure Collection'
+    };
+  
+    // Fallback to 'Full Gallery' if no type is selected
+    const displayTitle = titleMap[type] || 'Full Gallery';
 
   // Load logic - Same as Blog's loadPosts
   const loadPaintings = () => {
     const localGallery = JSON.parse(localStorage.getItem('galleryItems')) || [];
-    setAllPaintings([...localGallery, ...staticPaintings]);
+    
+    const combined = [...localGallery, ...staticPaintings];
+    // 2. Look for ?type= in the URL
+    const queryParams = new URLSearchParams(location.search);
+    const typeFilter = queryParams.get('type'); 
+
+    // 3. Apply the filter if it exists
+    if (typeFilter) {
+      const filtered = combined.filter(p => p.category === typeFilter);
+      setAllPaintings(filtered);
+    } else {
+      setAllPaintings(combined);
+    }
+
+
   };
 
   useEffect(() => {
     loadPaintings();
-  }, []);
+  }, [location.search]);
 
   // Delete logic - Same as Blog's handleDelete
   const handleDelete = (e, indexInLocal) => {
@@ -54,7 +85,8 @@ function Gallery() {
         <button onClick={() => setIsAdmin(!isAdmin)} className={styles.adminToggle}>
           {isAdmin ? "Exit Admin Mode" : "Admin Login"}
         </button>
-        <h1>Valle Crucis</h1>
+        {/* --- DYNAMIC TITLE HERE --- */}
+        <h1>{displayTitle}</h1>
       </div>
 
       {indexLb !== -1 && (

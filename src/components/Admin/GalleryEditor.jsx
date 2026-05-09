@@ -7,6 +7,7 @@ function GalleryEditor() {
         medium: '',
         dimensions: '',
         price: '',
+        category: 'landscapes', // 1. Added default category state
         image: null,
         imagePreview: null
     });
@@ -51,6 +52,7 @@ function GalleryEditor() {
                 medium: art.medium,
                 dimensions: art.dimensions,
                 price: art.price,
+                category: art.category, // 2. Included category in the saved object
                 image: art.image,
                 imagePreview: art.image // This is the base64 string from the reader
             };
@@ -64,6 +66,7 @@ function GalleryEditor() {
                 medium: '',
                 dimensions: '',
                 price: '',
+                category: 'valle-crucis', // Reset to default
                 image: null,
                 imagePreview: null
             });
@@ -93,6 +96,23 @@ function GalleryEditor() {
                             className={formStyles.fileInput}
                         />
                     </div>
+                </div>
+
+                {/* CATEGORY SELECTOR - 3. Added this new section */}
+                <div className={formStyles.inputGroup}>
+                    <label className={formStyles.label}>Target Gallery</label>
+                    <select
+                        className={formStyles.input}
+                        value={art.category}
+                        onChange={(e) => setArt({ ...art, category: e.target.value })}
+                        style={{ height: '45px' }} // Optional: match height of text inputs
+                    >
+                        <option value="">-- Select a Collection --</option>
+                        <option value="landscapes">Landscape Collection</option>
+                        <option value="still-life">Still Life</option>
+                        <option value="portraits">Portraits</option>
+                        <option value="figures">Figure Collection</option>
+                    </select>
                 </div>
 
                 {/* TITLE SECTION */}
@@ -153,6 +173,7 @@ function GalleryEditor() {
                         <div key={index} className={formStyles.miniCard}>
                             {p.imagePreview && <img src={p.imagePreview} alt="" />}
                             <h4>{p.title}</h4>
+                            <span className={formStyles.categoryTag}>{p.category}</span>
                             <p>{p.medium} {p.dimensions && `(${p.dimensions})`}</p> {/* Shows size in parens */}
                             <p>${p.price}</p>
                             <button onClick={() => deleteArt(index)} className={formStyles.deleteBtn}>

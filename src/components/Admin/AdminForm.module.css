@@ -137,3 +137,24 @@
     margin-bottom: 10px;
     border-radius: 2px;
 }
+
+/* Fix for the dropdown height issue */
+select.input {
+    height: 50px; 
+    padding: 0 10px;
+    /* appearance: none; */
+    background-color: white;
+}
+
+.categoryTag {
+    display: inline-block;
+    background-color: #e0e0e0;
+    color: #555;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 0.5em;
+    font-family: "Funnel Sans", sans-serif;
+}

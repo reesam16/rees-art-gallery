@@ -45,7 +45,8 @@
     grid-template-columns: repeat(2, 1fr);
     grid-template-areas: 
     "c1 c1"
-    "c2 c3";
+    "c2 c3"
+    "c4 c5";
 }
 
 .cont1{
@@ -57,7 +58,7 @@
 }
 
 /* Category Cards */
-.cont2, .cont3 {
+.cont2, .cont3, .cont4, .cont5 {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -79,6 +80,8 @@
     /* You can add the specific gallery preview images here as backgrounds if you like */
 }
 .c3 { grid-area: c3; }
+.c4 { grid-area: c4; }
+.c5 { grid-area: c5; }
 
 .heading h3 {
     color: white;
@@ -189,6 +192,8 @@
         "c1 "
         "c2 "
         "c3"
+        "c4"
+        "c5"
         ;
     } 
 }
