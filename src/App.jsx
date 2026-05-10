@@ -8,7 +8,7 @@ import AdminPages from './pages/Admin/Admin';
 import Home from './pages/Home/Home';
 import Shop from './pages/Shop/Shop';
 import Contact from './pages/Contact/Contact';
-import './App.css';
+
 
 function App() {
   return (
