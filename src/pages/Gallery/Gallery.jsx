@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'; 
-import { useLocation, useSearchParams } from 'react-router-dom'; 
+import { useState, useEffect } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { paintings as staticPaintings } from '../../paintingsData';
 import styles from './Gallery.module.css';
+import { supabase } from '../../supabaseClient';
 // import heroImage from '../../assets/vcp-photo.jpg';
 
-import landscapeHero from '../../assets/paintings/ncw9.jpg'; 
+import landscapeHero from '../../assets/paintings/ncw9.jpg';
 import stillLifeHero from '../../assets/paintings/slw1.jpg';
 import portraitHero from '../../assets/paintings/mcw2.jpg';
 import figureHero from '../../assets/paintings/fgw9.jpg';
@@ -16,49 +17,54 @@ function Gallery() {
   const [isAdmin, setIsAdmin] = useState(false); // Same as Blog
   const [searchParams] = useSearchParams();
 
-    // 1. Grab the current URL location
-    const location = useLocation(); 
-    // GET THE TYPE FIRST
-    const type = searchParams.get('type');
+  // 1. Grab the current URL location
+  const location = useLocation();
+  // GET THE TYPE FIRST
+  const type = searchParams.get('type');
 
-    const heroMap = {
-      'landscapes': landscapeHero,
-      'still-life': stillLifeHero,
-      'portraits': portraitHero,
-      'figures': figureHero
-    };
-    // Select the image based on the URL type, or use the default
-    const currentHero = heroMap[type] || defaultHero;
+  const heroMap = {
+    'landscapes': landscapeHero,
+    'still-life': stillLifeHero,
+    'portraits': portraitHero,
+    'figures': figureHero
+  };
+  // Select the image based on the URL type, or use the default
+  const currentHero = heroMap[type] || defaultHero;
 
-    // --- NEW: TITLE MAPPING ---
-    
-    const titleMap = {
-      'landscapes': 'Landscape Collection',
-      'still-life': 'Still Life Collection',
-      'portraits': 'Portrait Collection',
-      'figures': 'Figure Collection'
-    };
-    // Fallback to 'Full Gallery' if no type is selected
-    const displayTitle = titleMap[type] || 'Full Gallery';
+  // --- NEW: TITLE MAPPING ---
 
-  // Load logic - Same as Blog's loadPosts
-  const loadPaintings = () => {
-    const localGallery = JSON.parse(localStorage.getItem('galleryItems')) || [];
-    
-    const combined = [...localGallery, ...staticPaintings];
-    // 2. Look for ?type= in the URL
+  const titleMap = {
+    'landscapes': 'Landscape Collection',
+    'still-life': 'Still Life Collection',
+    'portraits': 'Portrait Collection',
+    'figures': 'Figure Collection'
+  };
+  // Fallback to 'Full Gallery' if no type is selected
+  const displayTitle = titleMap[type] || 'Full Gallery';
+
+  // 1. Updated load logic to talk to the Cloud
+  const loadPaintings = async () => {
+    // Get the type from the URL (e.g., landscapes)
     const queryParams = new URLSearchParams(location.search);
-    const typeFilter = queryParams.get('type'); 
+    const typeFilter = queryParams.get('type');
 
-    // 3. Apply the filter if it exists
+    // Start a query to your Supabase table
+    let query = supabase.from('gallery_paintings').select('*');
+
+    // If there is a type in the URL, filter the database results
     if (typeFilter) {
-      const filtered = combined.filter(p => p.category === typeFilter);
-      setAllPaintings(filtered);
-    } else {
-      setAllPaintings(combined);
+      // NOTE: Make sure 'target_gallery' matches your Supabase column name exactly!
+      query = query.eq('target_gallery', typeFilter);
     }
 
+    const { data, error } = await query;
 
+    if (error) {
+      console.error("Error fetching paintings:", error);
+    } else {
+      // data is an array of your paintings from the cloud
+      setAllPaintings(data);
+    }
   };
 
   useEffect(() => {
@@ -113,7 +119,7 @@ function Gallery() {
 
           <div className={styles['lightbox-content']}>
             <img
-              src={allPaintings[indexLb].imagePreview || allPaintings[indexLb].image}
+              src={allPaintings[indexLb].image_url}
               alt={allPaintings[indexLb].title}
             />
             <div className={styles['lightbox-caption']}>
@@ -149,7 +155,7 @@ function Gallery() {
             <div
               key={i}
               className={styles['gallery-item']} onClick={() => openLightbox(i)}>
-              <img src={art.imagePreview || art.image} alt={art.title} />
+              <img src={art.image_url} alt={art.title} />
               {/* Only show Delete if Admin is ON and it's a local post */}
               {isAdmin && isLocal && (
                 <button

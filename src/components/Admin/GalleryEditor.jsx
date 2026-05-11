@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import formStyles from './AdminForm.module.css';
+import { supabase } from '../../supabaseClient';
 
 function GalleryEditor() {
     const [art, setArt] = useState({
@@ -15,67 +16,98 @@ function GalleryEditor() {
     const [allArt, setAllArt] = useState([]);
 
     useEffect(() => {
-        const saved = JSON.parse(localStorage.getItem('galleryItems')) || [];
-        setAllArt(saved);
+        const fetchArt = async () => {
+            const { data, error } = await supabase
+                .from('gallery_paintings')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (!error) setAllArt(data);
+        };
+        fetchArt();
     }, []);
 
     // ADDED THIS FUNCTION
-    const deleteArt = (indexToDelete) => {
-        const updated = allArt.filter((_, index) => index !== indexToDelete);
-        localStorage.setItem('galleryItems', JSON.stringify(updated));
+    const deleteArt = async (idToDelete) => {
+        // This removes it from the screen immediately
+        const updated = allArt.filter((item) => item.id !== idToDelete);
         setAllArt(updated);
+
+        // Optional: Add the actual Supabase delete logic here later
+        // await supabase.from('gallery_paintings').delete().eq('id', idToDelete);
     };
 
+    // Add a piece of state to track the actual File object
+    const [file, setFile] = useState(null);
 
     const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            setFile(selectedFile); // Store the actual file for Supabase
             const reader = new FileReader();
             reader.onloadend = () => {
-                setArt(prev => ({ ...prev, image: reader.result, imagePreview: reader.result }));
+                setArt(prev => ({ ...prev, imagePreview: reader.result }));
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(selectedFile);
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Attempting to save painting..."); // This will show in the console
+
+        if (!file) return alert("Please select an image first!");
 
         try {
-            const existing = JSON.parse(localStorage.getItem('galleryItems')) || [];
+            // 1. Upload Image to Storage Bucket
+            const fileName = `${Date.now()}_${file.name}`;
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('painting-images') // <--- MUST match your bucket name in Supabase
+                .upload(fileName, file);
 
-            // We create a clean object to save
-            const newEntry = {
-                id: Date.now(),
-                title: art.title,
-                medium: art.medium,
-                dimensions: art.dimensions,
-                price: art.price,
-                category: art.category, // 2. Included category in the saved object
-                image: art.image,
-                imagePreview: art.image // This is the base64 string from the reader
-            };
+            if (uploadError) throw uploadError;
 
-            const updated = [newEntry, ...existing];
-            localStorage.setItem('galleryItems', JSON.stringify(updated));
+            // 2. Get the Public URL for that image
+            const { data: urlData } = supabase.storage
+                .from('painting-images')
+                .getPublicUrl(fileName);
 
-            setAllArt(updated);
+            const publicUrl = urlData.publicUrl;
+
+            // 3. Insert Data into your gallery_paintings table
+            const { error: insertError } = await supabase
+                .from('gallery_paintings')
+                .insert([
+                    {
+                        title: art.title,
+                        medium: art.medium,
+                        dimensions: art.dimensions,
+                        price: art.price,
+                        target_gallery: art.category, // Matches your table column!
+                        image_url: publicUrl // The link we just generated
+                    }
+                ]);
+
+            if (insertError) throw insertError;
+
+            alert("Success! Painting is in the cloud.");
+            // Clear form here...
             setArt({
                 title: '',
                 medium: '',
                 dimensions: '',
                 price: '',
-                category: 'valle-crucis', // Reset to default
+                category: 'landscapes',
                 image: null,
                 imagePreview: null
             });
-            alert("Success! Check Local Storage now.");
+            setFile(null);
+
         } catch (err) {
-            console.error("Save failed:", err);
-            alert("Could not save. The image might be too large.");
+            console.error("Supabase Error:", err.message);
+            alert("Upload failed: " + err.message);
         }
     };
+
 
     return (
         <div className={formStyles.adminSectionWrapper}>
@@ -156,7 +188,7 @@ function GalleryEditor() {
                     <label className={formStyles.label}>Price ($)</label>
                     <input
                         className={formStyles.input}
-                        type="number"
+                        type="text"
                         placeholder="0.00"
                         value={art.price}
                         onChange={(e) => setArt({ ...art, price: e.target.value })}
@@ -170,13 +202,20 @@ function GalleryEditor() {
                 <h3 className={formStyles.recentTitle}>Manage Uploaded Paintings</h3>
                 <div className={formStyles.postGrid}>
                     {allArt.map((p, index) => (
-                        <div key={index} className={formStyles.miniCard}>
-                            {p.imagePreview && <img src={p.imagePreview} alt="" />}
+                        <div key={p.id || index} className={formStyles.miniCard}>
+                            {/* Supabase uses 'image_url', not 'imagePreview' */}
+                            {p.image_url && <img src={p.image_url} alt={p.title} />}
+
                             <h4>{p.title}</h4>
-                            <span className={formStyles.categoryTag}>{p.category}</span>
-                            <p>{p.medium} {p.dimensions && `(${p.dimensions})`}</p> {/* Shows size in parens */}
+
+                            {/* Supabase uses 'target_gallery', not 'category' */}
+                            <span className={formStyles.categoryTag}>{p.target_gallery}</span>
+
+                            <p>{p.medium} {p.dimensions && `(${p.dimensions})`}</p>
                             <p>${p.price}</p>
-                            <button onClick={() => deleteArt(index)} className={formStyles.deleteBtn}>
+
+                            {/* We will need to update this delete function for Supabase later! */}
+                            <button onClick={() => deleteArt(p.id)} className={formStyles.deleteBtn}>
                                 Delete
                             </button>
                         </div>
