@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { paintings as staticPaintings } from '../../paintingsData';
+
 import styles from './Gallery.module.css';
 import { supabase } from '../../supabaseClient';
 // import heroImage from '../../assets/vcp-photo.jpg';
@@ -72,12 +72,10 @@ function Gallery() {
   }, [location.search]);
 
   // Delete logic - Same as Blog's handleDelete
-  const handleDelete = (e, indexInLocal) => {
-    e.stopPropagation(); // Stops the Lightbox from opening
-    const localItems = JSON.parse(localStorage.getItem('galleryItems')) || [];
-    const updated = localItems.filter((_, i) => i !== indexInLocal);
-    localStorage.setItem('galleryItems', JSON.stringify(updated));
-    loadPaintings(); // Refresh the screen
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
+    const { error } = await supabase.from('gallery_paintings').delete().eq('id', id);
+    if (!error) loadPaintings(); // Refresh the grid
   };
 
   const openLightbox = (index) => setIndexLb(index);
@@ -149,7 +147,6 @@ function Gallery() {
 
       <div className={styles['gallery-container']}>
         {allPaintings.map((art, i) => {
-          const isLocal = i < (allPaintings.length - staticPaintings.length);
 
           return (
             <div
@@ -157,9 +154,9 @@ function Gallery() {
               className={styles['gallery-item']} onClick={() => openLightbox(i)}>
               <img src={art.image_url} alt={art.title} />
               {/* Only show Delete if Admin is ON and it's a local post */}
-              {isAdmin && isLocal && (
+              {isAdmin && (
                 <button
-                  onClick={(e) => handleDelete(e, i)}
+                  onClick={(e) => handleDelete(e, art.id)}
                   className={styles.adminDeleteBtn}
                 >
                   Delete Painting

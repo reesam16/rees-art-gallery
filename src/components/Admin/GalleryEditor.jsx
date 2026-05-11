@@ -15,26 +15,40 @@ function GalleryEditor() {
 
     const [allArt, setAllArt] = useState([]);
 
-    useEffect(() => {
-        const fetchArt = async () => {
-            const { data, error } = await supabase
-                .from('gallery_paintings')
-                .select('*')
-                .order('created_at', { ascending: false });
+    const fetchArt = async () => {
+        const { data, error } = await supabase
+            .from('gallery_paintings')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-            if (!error) setAllArt(data);
-        };
+        if (!error) setAllArt(data);
+    };
+
+    useEffect(() => {
         fetchArt();
     }, []);
 
-    // ADDED THIS FUNCTION
     const deleteArt = async (idToDelete) => {
-        // This removes it from the screen immediately
-        const updated = allArt.filter((item) => item.id !== idToDelete);
-        setAllArt(updated);
-
-        // Optional: Add the actual Supabase delete logic here later
-        // await supabase.from('gallery_paintings').delete().eq('id', idToDelete);
+        // 1. Ask for confirmation so you don't accidentally delete your work
+        const confirmed = window.confirm("Are you sure you want to delete this painting permanently?");
+        
+        if (confirmed) {
+            // 2. Tell Supabase to remove it from the database
+            const { error } = await supabase
+                .from('gallery_paintings')
+                .delete()
+                .eq('id', idToDelete);
+    
+            if (error) {
+                console.error("Delete error:", error.message);
+                alert("Could not delete from cloud: " + error.message);
+            } else {
+                // 3. If successful, remove it from the screen
+                const updated = allArt.filter((item) => item.id !== idToDelete);
+                setAllArt(updated);
+                alert("Painting deleted successfully.");
+            }
+        }
     };
 
     // Add a piece of state to track the actual File object
@@ -101,6 +115,7 @@ function GalleryEditor() {
                 imagePreview: null
             });
             setFile(null);
+            fetchArt();
 
         } catch (err) {
             console.error("Supabase Error:", err.message);
@@ -216,7 +231,7 @@ function GalleryEditor() {
 
                             {/* We will need to update this delete function for Supabase later! */}
                             <button onClick={() => deleteArt(p.id)} className={formStyles.deleteBtn}>
-                                Delete
+                                Delete Paintings
                             </button>
                         </div>
                     ))}
