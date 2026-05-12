@@ -1,16 +1,35 @@
 import { useState, useEffect } from 'react';
-import { shopItems as staticItems } from '../../shopData';
+
+import { supabase } from '../../supabaseClient'; 
 import ShopCard from '../../components/ShopCard/ShopCard';
 import styles from './Shop.module.css';
 
 function Shop() {
   const [inventory, setInventory] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Load custom shop items from local storage + static items
-    const localItems = JSON.parse(localStorage.getItem('shopItems')) || [];
-    setInventory([...localItems, ...staticItems]);
-  }, []);
+ // Define the "What"
+ const fetchInventory = async () => {
+  try {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('shop_items')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    setInventory(data || []);
+  } catch (err) {
+    console.error("Error loading shop:", err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+// Define the "When"
+useEffect(() => {
+  fetchInventory();
+}, []);
 
   return (
     <main className={styles.shopContainer}>
@@ -19,11 +38,19 @@ function Shop() {
         <p>Original paintings available for purchase.</p>
       </header>
 
-      <div className={styles.productGrid}>
-        {inventory.map((item) => (
-          <ShopCard key={item.id} item={item} />
-        ))}
-      </div>
+      {loading ? (
+        <p style={{ textAlign: 'center' }}>Loading the collection...</p>
+      ) : (
+        <div className={styles.productGrid}>
+          {inventory.map((item) => (
+            <ShopCard key={item.id} item={item} />
+          ))}
+        </div>
+      )}
+      
+      {!loading && inventory.length === 0 && (
+        <p style={{ textAlign: 'center' }}>No items currently in the shop. Check back soon!</p>
+      )}
     </main>
   );
 }

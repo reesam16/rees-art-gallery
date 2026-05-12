@@ -13,7 +13,7 @@ const handleInquiry = () => {
   return (
     <div className={`${styles.card} ${item.isSold ? styles.sold : ''}`}>
       <div className={styles.imageWrapper}>
-        <img src={item.image} alt={item.title} />
+        <img src={item.image_url || item.image} alt={item.title} />
         {item.isSold && <span className={styles.soldBadge}>SOLD</span>}
       </div>
       
