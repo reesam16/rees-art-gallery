@@ -1,28 +1,47 @@
 import { useState, useEffect } from 'react'; // Added these
-import { blogPosts as staticPosts } from '../../blogData'; // Renamed for clarity
+
 import styles from './Blog.module.css';
 import { Link } from 'react-router-dom';
+import { supabase } from '../../supabaseClient'; 
 
 function Blog() {
   const [allPosts, setAllPosts] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false); // The "Admin Mode" toggle
 
-  // Load posts
-  const loadPosts = () => {
-    const localPosts = JSON.parse(localStorage.getItem('journalPosts')) || [];
-    setAllPosts([...localPosts, ...staticPosts]);
+   // Load posts from Supabase
+   const loadPosts = async () => {
+    // 1. Get the data from our new table
+    const { data, error } = await supabase
+      .from('blog_posts') // The "s" we added!
+      .select('*')
+      .order('created_at', { ascending: false }); // Show newest first
+
+    if (error) {
+      console.error("Error fetching blogs:", error.message);
+    } else {
+      // 2. Combine them with your static posts if you still want those
+      setAllPosts(data || []);
+    }
   };
 
   useEffect(() => {
     loadPosts();
   }, []);
 
-  const handleDelete = (indexInLocal) => {
-    const localPosts = JSON.parse(localStorage.getItem('journalPosts')) || [];
-    // We only delete from the localPosts array
-    const updated = localPosts.filter((_, i) => i !== indexInLocal);
-    localStorage.setItem('journalPosts', JSON.stringify(updated));
-    loadPosts(); // Refresh the screen
+  const handleDelete = async (id) => {
+    // A quick confirmation so you don't accidentally delete your hard work!
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    const { error } = await supabase
+      .from('blog_posts')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      alert("Could not delete post: " + error.message);
+    } else {
+      loadPosts(); 
+    }
   };
 
   return (
@@ -36,25 +55,27 @@ function Blog() {
       </button>
 
       <section className={styles.postList}>
-        {allPosts.map((post, index) => {
-          // Check if this post is from localStorage (static posts won't have an index in localPosts)
-          const isLocal = index < (allPosts.length - staticPosts.length);
-
-          return (
-            <article key={`${post.title}-${index}`} className={styles.blogCard}>
+        {allPosts.length === 0 ? (
+          <p className={styles.noPosts}>No blog posts found. Time to write something!</p>
+        ) : (
+          allPosts.map((post) => (
+            <article key={post.id} className={styles.blogCard}>
               <div className={styles.imageWrapper}>
-                <img src={post.imagePreview || post.image} alt={post.title} />
+                {/* Now only using the Supabase column name */}
+                <img src={post.image_url} alt={post.title} />
               </div>
 
               <div className={styles.postContent}>
-                <span className={styles.date}>{post.date}</span>
+                <span className={styles.date}>
+                  {new Date(post.created_at).toLocaleDateString()}
+                </span>
+                
                 <h2>{post.title}</h2>
                 <p>{post.excerpt}</p>
                 
-                {/* Only show Delete if Admin Mode is ON and it's a local post */}
-                {isAdmin && isLocal && (
+                {isAdmin && (
                   <button 
-                    onClick={() => handleDelete(index)}
+                    onClick={() => handleDelete(post.id)}
                     className={styles.adminDeleteBtn}
                   >
                     Delete Post
@@ -66,8 +87,8 @@ function Blog() {
                 </Link>
               </div>
             </article>
-          );
-        })}
+          ))
+        )}
       </section>
     </main>
   );

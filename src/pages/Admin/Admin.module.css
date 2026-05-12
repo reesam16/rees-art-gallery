@@ -58,6 +58,9 @@
     font-weight: bold;
     border-bottom: 1px solid #000; /* Subtle underline for the active tab */
 }
+.header{
+    margin-right: 10px;
+}
 .editorContainer {
     max-width: 900px; /* This gives the BlogEditor room to breathe */
     width: 100%;

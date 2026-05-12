@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'; // Added useEffect
 import formStyles from './AdminForm.module.css';
+import { supabase } from '../../supabaseClient';
 
 function BlogEditor() {
   // State for the NEW post you are typing
   const [post, setPost] = useState({
     title: '',
-    date: new Date().toLocaleDateString(),
     excerpt: '',
     content: '',
     image: null,
@@ -14,12 +14,21 @@ function BlogEditor() {
 
   // NEW: State for the LIST of all posts saved in the browser
   const [allPosts, setAllPosts] = useState([]);
+  const [file, setFile] = useState(null);
 
-  // Load posts from localStorage when the component first opens
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('journalPosts')) || [];
-    setAllPosts(saved);
-  }, []);
+    // 1. Fetch existing posts on load
+    const fetchPosts = async () => {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .order('created_at', { ascending: false });
+  
+      if (!error) setAllPosts(data);
+    };
+
+    useEffect(() => {
+      fetchPosts();
+    }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,121 +37,113 @@ function BlogEditor() {
 
   // UPDATED: Now uses FileReader (Base64) so images stay forever
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPost(prev => ({
-          ...prev,
-          image: reader.result,
-          imagePreview: reader.result 
-        }));
+        setPost(prev => ({ ...prev, imagePreview: reader.result }));
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(selectedFile);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const existingPosts = JSON.parse(localStorage.getItem('journalPosts')) || [];
-    const updatedPosts = [post, ...existingPosts];
-  
-    localStorage.setItem('journalPosts', JSON.stringify(updatedPosts));
-    
-    // Update the list state immediately so it shows up at the bottom
-    setAllPosts(updatedPosts);
-    
-    alert("Success! Your entry has been published.");
-    
-    setPost({
-      title: '',
-      date: new Date().toLocaleDateString(),
-      excerpt: '',
-      content: '',
-      image: null,
-      imagePreview: null
-    });
+    if (!file) return alert("Please select a featured image!");
+
+    try {
+      // 2. Upload Image to Storage
+      const fileName = `blog_${Date.now()}_${file.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('blog-images') // Reusing your existing bucket
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage
+        .from('blog-images')
+        .getPublicUrl(fileName);
+
+      // 3. Insert into the blog_posts table
+      const { error: insertError } = await supabase
+        .from('blog_posts')
+        .insert([{
+          title: post.title,
+          excerpt: post.excerpt,
+          content: post.content,
+          image_url: urlData.publicUrl
+        }]);
+
+      if (insertError) throw insertError;
+
+      alert("Blog entry published!");
+      
+      // Clear form
+      setPost({ title: '', excerpt: '', content: '', imagePreview: null });
+      setFile(null);
+      e.target.reset(); // Reset the file input manually if needed
+      fetchPosts(); // Refresh list
+
+    } catch (err) {
+      alert("Publishing failed: " + err.message);
+    }
   };
 
-  const deletePost = (indexToDelete) => {
-    const existingPosts = JSON.parse(localStorage.getItem('journalPosts')) || [];
-    const updatedPosts = existingPosts.filter((_, index) => index !== indexToDelete);
-    localStorage.setItem('journalPosts', JSON.stringify(updatedPosts));
-    setAllPosts(updatedPosts);
+  const deletePost = async (id) => {
+    const confirmed = window.confirm("Delete this post permanently?");
+    if (confirmed) {
+      const { error } = await supabase
+        .from('blog_posts')
+        .delete()
+        .eq('id', id);
+
+      if (!error) fetchPosts();
+    }
   };
 
   return (
     <div className={formStyles.adminSectionWrapper}>
       <form className={formStyles.editorForm} onSubmit={handleSubmit}>
+        <h3 className={formStyles.recentTitle}>New Blog Entry</h3>
+        
         <div className={formStyles.inputGroup}>
-          <label className={formStyles.label}>Painting Image</label>
+          <label className={formStyles.label}>Featured Image</label>
           <div className={formStyles.imageUploadWrapper}>
             {post.imagePreview && (
               <img src={post.imagePreview} alt="Preview" className={formStyles.previewImage} />
             )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className={formStyles.fileInput}
-            />
+            <input type="file" accept="image/*" onChange={handleImageChange} className={formStyles.fileInput} />
           </div>
         </div>
 
         <div className={formStyles.inputGroup}>
           <label className={formStyles.label}>Post Title</label>
-          <input
-            className={formStyles.input}
-            type="text"
-            name="title"
-            placeholder="e.g. Bouguereau After the Bath"
-            value={post.title}
-            onChange={handleChange}
-          />
+          <input className={formStyles.input} type="text" name="title" value={post.title} onChange={handleChange} />
         </div>
 
         <div className={formStyles.inputGroup}>
           <label className={formStyles.label}>Short Snippet (Excerpt)</label>
-          <textarea
-            className={formStyles.textarea}
-            name="excerpt"
-            rows="2"
-            placeholder="A brief sentence for the main blog page..."
-            value={post.excerpt}
-            onChange={handleChange}
-          />
+          <textarea className={formStyles.textarea} name="excerpt" rows="2" value={post.excerpt} onChange={handleChange} />
         </div>
 
         <div className={formStyles.inputGroup}>
           <label className={formStyles.label}>Full Story</label>
-          <textarea
-            className={formStyles.textarea}
-            name="content"
-            rows="10"
-            placeholder="Describe your process, the palette used, etc."
-            value={post.content}
-            onChange={handleChange}
-          />
+          <textarea className={formStyles.textarea} name="content" rows="10" value={post.content} onChange={handleChange} />
         </div>
 
         <button type="submit" className={formStyles.saveBtn}>Publish to Journal</button>
       </form>
 
-      {/* NEW: THE DISPLAY LIST BELOW THE FORM */}
       <div className={formStyles.recentPosts}>
         <h3 className={formStyles.recentTitle}>Recently Published</h3>
         <div className={formStyles.postGrid}>
-          {allPosts.map((p, index) => (
-            <div key={index} className={formStyles.miniCard}>
-              {p.imagePreview && <img src={p.imagePreview} alt="" />}
+          {allPosts.map((p) => (
+            <div key={p.id} className={formStyles.miniCard}>
+              <img src={p.image_url} alt="" />
               <h4>{p.title}</h4>
-              <p>{p.date}</p>
-              <button 
-                onClick={() => deletePost(index)} 
-                className={formStyles.deleteBtn}
-              >
-                Delete
-              </button>
+              <p>{new Date(p.created_at).toLocaleDateString()}</p>
+              <button onClick={() => deletePost(p.id)} className={formStyles.deleteBtn}>Delete</button>
             </div>
           ))}
         </div>
