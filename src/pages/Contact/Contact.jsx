@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 import styles from './Contact.module.css';
 
 function Contact() {
@@ -7,14 +8,12 @@ function Contact() {
     const [formData, setFormData] = useState({
         name: '', email: '', subject: '', message: ''
     });
-    const [submissions, setSubmissions] = useState([]);
+
     const [status, setStatus] = useState({ type: '', messages: [] });
+    const [isSending, setIsSending] = useState(false);
 
-    // Load from Local Storage on mount
+     // Auto-fill from Shop URL
     useEffect(() => {
-        const saved = JSON.parse(localStorage.getItem('mySubmissions')) || [];
-        setSubmissions(saved);
-
         // Check for Shop Inquiry
         const params = new URLSearchParams(location.search);
         const product = params.get('product');
@@ -33,13 +32,13 @@ function Contact() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         // YOUR CUSTOM RULES
         const rules = [
             { isValid: formData.name.length > 2, msg: 'Please enter a name (at least 2 characters).' },
             { isValid: formData.email.includes('@') && formData.email.includes('.'), msg: 'Please enter a valid email' },
             { isValid: formData.subject.length > 2, msg: 'Subject is required.' },
-            { isValid: formData.message.length >= 10, msg: 'Please use more than 10 characters.' } 
+            { isValid: formData.message.length >= 10, msg: 'Please use more than 10 characters.' }
             // Note: Changed from your JS comment of 50 to match the code logic of 10
         ];
 
@@ -47,23 +46,29 @@ function Contact() {
 
         if (errors.length > 0) {
             setStatus({ type: 'error', messages: errors });
-        } else {
-            const newSubmission = { ...formData, id: Date.now() };
-            const updated = [newSubmission, ...submissions];
-            
-            setSubmissions(updated);
-            localStorage.setItem('mySubmissions', JSON.stringify(updated));
-            
-            setStatus({ type: 'success', messages: ["Success! Your message has been sent."] });
-            setFormData({ name: '', email: '', subject: '', message: '' });
+            return;
         }
-    };
 
-    const clearMessages = () => {
-        if (window.confirm("Are you sure you want to delete all messages?")) {
-            setSubmissions([]);
-            localStorage.removeItem('mySubmissions');
-        }
+        setIsSending(true);
+
+        // Sends the form data to the EmailJS template we set up
+        emailjs.send(
+            import.meta.env.VITE_EMAILJS_SERVICE_ID,
+            import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+            formData,
+            import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        )
+            .then(() => {
+                setStatus({ type: 'success', messages: ["Success! Your inquiry has been sent to Rees."] });
+                setFormData({ name: '', email: '', subject: '', message: '' });
+            })
+            .catch((error) => {
+                console.error('EmailJS Error:', error);
+                setStatus({ type: 'error', messages: ["Could not send email. Please try again later."] });
+            })
+            .finally(() => {
+                setIsSending(false);
+            });
     };
 
     return (
@@ -71,38 +76,35 @@ function Contact() {
             <div className={styles['form-container']}>
                 <h2 className={styles['form-title']}>Contact Me</h2>
                 <form className={styles['contact-form']} onSubmit={handleSubmit} noValidate>
-                    
+
                     <div className={styles['form-group']}>
                         <label className={styles['form-label']}>Your Name</label>
-                        <input type="text" name="name" className={styles['form-input']} 
-                               value={formData.name} onChange={handleChange} placeholder="Name" />
+                        <input type="text" name="name" className={styles['form-input']}
+                            value={formData.name} onChange={handleChange} placeholder="Name" />
                     </div>
 
                     <div className={styles['form-group']}>
                         <label className={styles['form-label']}>Your Email</label>
-                        <input type="email" name="email" className={styles['form-input']} 
-                               value={formData.email} onChange={handleChange} placeholder="email@mail.com" />
+                        <input type="email" name="email" className={styles['form-input']}
+                            value={formData.email} onChange={handleChange} placeholder="email@mail.com" />
                     </div>
 
                     <div className={styles['form-group']}>
                         <label className={styles['form-label']}>Subject</label>
-                        <input type="text" name="subject" className={styles['form-input']} 
-                               value={formData.subject} onChange={handleChange} placeholder="Inquiry about..." />
+                        <input type="text" name="subject" className={styles['form-input']}
+                            value={formData.subject} onChange={handleChange} placeholder="Inquiry about..." />
                     </div>
 
                     <div className={styles['form-group-last']}>
                         <label className={styles['form-label']}>Your Message</label>
-                        <textarea name="message" rows="10" className={styles['form-input']} 
-                                  value={formData.message} onChange={handleChange} placeholder="Your message here..." />
+                        <textarea name="message" rows="10" className={styles['form-input']}
+                            value={formData.message} onChange={handleChange} placeholder="Your message here..." />
                     </div>
 
                     <div className={styles['button-container']}>
-                        <button type="submit" className={styles['submit-button']}>Send Message</button>
-                        {submissions.length > 0 && (
-                            <button type="button" onClick={clearMessages} className={styles['clear-button']}>
-                                Clear Messages
-                            </button>
-                        )}
+                        <button type="submit" className={styles['submit-button']} disabled={isSending}>
+                            {isSending ? 'Sending...' : 'Send Message'}
+                        </button>
                     </div>
 
                     {/* Status Messages */}
@@ -113,23 +115,6 @@ function Contact() {
                             </ul>
                         </div>
                     )}
-
-                    <section className={styles['feed-container']}>
-                        <h3>Recent Submissions</h3>
-                        <div className={styles['submission-list']}>
-                            {submissions.length === 0 ? (
-                                <p>No messages yet.</p>
-                            ) : (
-                                submissions.map((sub) => (
-                                    <div key={sub.id} className={styles['message-card']}>
-                                        <h4>{sub.subject}</h4>
-                                        <p><strong>From:</strong> {sub.name} ({sub.email})</p>
-                                        <p>{sub.message}</p>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </section>
                 </form>
             </div>
         </main>
