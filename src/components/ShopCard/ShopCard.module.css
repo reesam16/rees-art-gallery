@@ -26,15 +26,35 @@
     object-fit: cover;
 }
 
+.price {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.strikethrough {
+    text-decoration: line-through !important;
+    color: #999 !important;
+    opacity: 0.6;
+    display: inline-block; /* Helps some browsers render the line correctly */
+}
+
 .soldBadge {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(255, 0, 0, 0.8);
+    top: 15px;
+    left: 15px; /* MOVED TO LEFT SIDE */
+    
+    background-color: #ff4444; /* Gallery Red */
     color: white;
-    padding: 5px 10px;
+    padding: 6px 14px;
+    font-family: 'Lexend Giga', sans-serif;
+    font-size: 0.7rem;
     font-weight: bold;
-}
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 5;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    pointer-events: none; /* So it doesn't block clicks to the image */
+  }
 
 .info h3 {
     margin: 0 0 5px 0;

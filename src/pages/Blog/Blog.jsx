@@ -1,15 +1,14 @@
-import { useState, useEffect } from 'react'; // Added these
-
+import { useState, useEffect } from 'react'; 
 import styles from './Blog.module.css';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../supabaseClient'; 
 
 function Blog() {
   const [allPosts, setAllPosts] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false); // The "Admin Mode" toggle
+  const [isAdmin, setIsAdmin] = useState(false); 
 
    // Load posts from Supabase
-   const loadPosts = async () => {
+   const loadContent= async () => {
     // 1. Get the data from our new table
     const { data, error } = await supabase
       .from('blog_posts') // The "s" we added!
@@ -19,14 +18,22 @@ function Blog() {
     if (error) {
       console.error("Error fetching blogs:", error.message);
     } else {
-      // 2. Combine them with your static posts if you still want those
       setAllPosts(data || []);
+      // Check if a user is logged in
+    const { data: { session } } = await supabase.auth.getSession();
+    setIsAdmin(!!session); // If session exists, isAdmin = true
     }
   };
 
   useEffect(() => {
-    loadPosts();
-  }, []);
+    loadContent();
+  // 2. Listen for Auth changes (in case you log out in another tab)
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    setIsAdmin(!!session);
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
 
   const handleDelete = async (id) => {
     // A quick confirmation so you don't accidentally delete your hard work!
@@ -40,19 +47,19 @@ function Blog() {
     if (error) {
       alert("Could not delete post: " + error.message);
     } else {
-      loadPosts(); 
+      loadContent(); 
     }
   };
 
   return (
     <main className={styles.blogPage}>
-      {/* A temporary "Secret" button to toggle Admin Mode */}
-      <button 
-        onClick={() => setIsAdmin(!isAdmin)} 
-        className={styles.adminToggle}
-      >
-        {isAdmin ? "Exit Admin Mode" : "Admin Login"}
-      </button>
+      {/* 3. The "Secret" button now ONLY shows up if you are actually logged in */}
+      {isAdmin && (
+        <div className={styles.adminBanner}>
+          <span>Admin Mode Active</span>
+          <Link to="/admin" className={styles.dashboardLink}>Go to Dashboard</Link>
+        </div>
+      )}
 
       <section className={styles.postList}>
         {allPosts.length === 0 ? (

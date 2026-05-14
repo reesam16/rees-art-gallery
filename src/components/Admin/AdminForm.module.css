@@ -1,3 +1,4 @@
+
 /* Container for the entire form */
 .editorForm {
     width: 100%;
@@ -142,6 +143,45 @@
     margin-bottom: 10px;
     border-radius: 2px;
 }
+
+.formRow {
+    display: flex;
+    gap: 20px;
+}
+
+/*  */
+
+/* Inside AdminForm.module.css */
+
+.adminActions {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.soldBtn {
+    background-color: #5099d0; /* Blue for 'Action' */
+    color: white;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+}
+
+.availableBtn {
+    background-color: #555; /* Neutral for 'Revert' */
+    color: white;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+}
+
+.priceSold {
+    text-decoration: line-through;
+    color: #888;
+}
+
+
 
 /* Fix for the dropdown height issue */
 select.input {

@@ -1,7 +1,7 @@
 import styles from './ShopCard.module.css';
 import { useNavigate } from 'react-router-dom';
 
-function ShopCard({ item }) {
+function ShopCard({ item, isAdmin, onToggleSold }) {
 
     const navigate = useNavigate();
 
@@ -22,13 +22,22 @@ const handleInquiry = () => {
         <p>{item.medium} • {item.dimensions}</p>
         
         <div className={styles.footer}>
-          <span className={styles.price}>${item.price}</span>
+          {/* Conditional class for line-through */}
+          <span className={`${styles.price} ${item.isSold ? styles.strikethrough : ''}`}>
+                        ${item.price}
+                    </span>
           {!item.isSold && (
             <button className={styles.buyBtn} onClick={handleInquiry}>
             Inquire to Buy
         </button>
           )}
         </div>
+        {/* Show toggle button only for Admin */}
+        {isAdmin && (
+                    <button onClick={onToggleSold} className={styles.adminToggleBtn}>
+                        {item.isSold ? "Set to Available" : "Mark as Sold"}
+                    </button>
+                )}
       </div>
     </div>
   );

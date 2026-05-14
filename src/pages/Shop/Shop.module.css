@@ -1,27 +1,105 @@
-/* .shopPage {
-    padding: 100px 20px;
-    text-align: center;
-    min-height: 80vh;
-} */
-.productGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 40px;
-    padding: 40px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .shopHeader {
-    text-align: center;
-    padding: 60px 20px;
-    background-color: #f9f9f9;
-  }
-  /* src/pages/Shop/Shop.module.css */
 
-.shopContainer {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+
+.shopPage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
+.shopHeader {
+  text-align: center;
+  margin-bottom: 60px;
+  font-family: 'Lexend Giga', sans-serif;
+  text-transform: uppercase;
+}
+
+.shopGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 40px;
+}
+
+.itemWrapper {
+  position: relative; /* Essential for the absolute button */
+}
+
+
+/* Admin Banner - Keep it consistent with Gallery/Blog */
+.adminBanner {
+  background-color: #000;
+  color: #fff;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Lexend Giga', sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin-bottom: 20px;
+}
+
+.dashboardLink {
+  color: #5099d0;
+  text-decoration: none;
+  border: 1px solid #5099d0;
+  padding: 4px 12px;
+}
+
+/* The Shop Delete Button */
+.adminDeleteBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: 1px solid #ff4444;
+  padding: 8px 12px;
+  font-family: 'Lexend Giga', sans-serif;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.itemWrapper:hover .adminDeleteBtn {
+  opacity: 1;
+}
+
+.adminDeleteBtn:hover {
+  background: #ff4444;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+  color: #999;
+  opacity: 0.7;
+}
+
+.adminToggleBtn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  background-color: #333;
+  color: white;
+  border: none;
+  font-family: 'Lexend Giga', sans-serif;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.adminToggleBtn:hover {
+  background-color: #5099d0;
+}
+
+/* Card fade when sold */
+.card.sold img {
+  filter: grayscale(40%);
+  opacity: 0.8;
+}

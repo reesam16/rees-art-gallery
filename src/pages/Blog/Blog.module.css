@@ -79,6 +79,20 @@
 
 /*  */
 
+/* 
+.adminToggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px;
+    z-index: 1000;
+    background: #000;
+    color: #fff;
+    border: none;
+    font-size: 0.6rem;
+    cursor: pointer;
+} */
+/*  */
 .adminDeleteBtn {
     background: #000;
     border: 1px solid #000;
@@ -99,17 +113,34 @@
     border-color: #ff4444;
 }
 
-.adminToggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px;
-    z-index: 1000;
-    background: #000;
+.adminBanner {
+    background-color: #000;
     color: #fff;
-    border: none;
-    font-size: 0.6rem;
-    cursor: pointer;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Lexend Giga', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 50px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.dashboardLink {
+    color: #5099d0; /* Or your preferred accent color */
+    text-decoration: none;
+    border: 1px solid #5099d0;
+    padding: 4px 12px;
+    transition: all 0.3s ease;
+}
+
+.dashboardLink:hover {
+    background-color: #5099d0;
+    color: #fff;
 }
 
 /* --- Mobile View --- */

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
-
 import styles from './Gallery.module.css';
 import { supabase } from '../../supabaseClient';
-// import heroImage from '../../assets/vcp-photo.jpg';
+import { Link } from 'react-router-dom'; // Add this for the Banner link
 
 import landscapeHero from '../../assets/paintings/ncw9.jpg';
 import stillLifeHero from '../../assets/paintings/slw1.jpg';
@@ -14,7 +13,7 @@ import defaultHero from '../../assets/vcp-photo.jpg'; // Your fallback
 function Gallery() {
   const [allPaintings, setAllPaintings] = useState([]);
   const [indexLb, setIndexLb] = useState(-1);
-  const [isAdmin, setIsAdmin] = useState(false); // Same as Blog
+  const [isAdmin, setIsAdmin] = useState(false); 
   const [searchParams] = useSearchParams();
 
   // 1. Grab the current URL location
@@ -32,7 +31,6 @@ function Gallery() {
   const currentHero = heroMap[type] || defaultHero;
 
   // --- NEW: TITLE MAPPING ---
-
   const titleMap = {
     'landscapes': 'Landscape Collection',
     'still-life': 'Still Life Collection',
@@ -45,31 +43,36 @@ function Gallery() {
   // 1. Updated load logic to talk to the Cloud
   const loadPaintings = async () => {
     // Get the type from the URL (e.g., landscapes)
-    const queryParams = new URLSearchParams(location.search);
-    const typeFilter = queryParams.get('type');
-
+    const typeFilter = searchParams.get('type');
     // Start a query to your Supabase table
     let query = supabase.from('gallery_paintings').select('*');
-
     // If there is a type in the URL, filter the database results
     if (typeFilter) {
       // NOTE: Make sure 'target_gallery' matches your Supabase column name exactly!
       query = query.eq('target_gallery', typeFilter);
     }
-
     const { data, error } = await query;
-
     if (error) {
       console.error("Error fetching paintings:", error);
     } else {
       // data is an array of your paintings from the cloud
-      setAllPaintings(data);
+      setAllPaintings(data || []);
+      // --- CHECK AUTH STATUS ---
+    const { data: { session } } = await supabase.auth.getSession();
+    setIsAdmin(!!session);
     }
   };
 
   useEffect(() => {
     loadPaintings();
+    // --- AUTH LISTENER ---
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAdmin(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, [location.search]);
+  
 
   // Delete logic - Same as Blog's handleDelete
   const handleDelete = async (e, id) => {
@@ -95,16 +98,19 @@ function Gallery() {
 
   return (
     <main>
+      {isAdmin && (
+        <div className={styles.adminBanner}>
+          <span>Gallery Admin Active</span>
+          <Link to="/admin" className={styles.dashboardLink}>Go to Dashboard</Link>
+        </div>
+      )}
       <div className={styles.header} style={{
         backgroundImage: `
           linear-gradient(rgba(4, 239, 247, 0.128), transparent 80%), 
           linear-gradient(0deg, #f7f2e89b, transparent 90%),
           url(${currentHero})
         ` }}>
-        {/* The Admin Login Toggle from the Blog */}
-        <button onClick={() => setIsAdmin(!isAdmin)} className={styles.adminToggle}>
-          {isAdmin ? "Exit Admin Mode" : "Admin Login"}
-        </button>
+       
         {/* --- DYNAMIC TITLE HERE --- */}
         <h1>{displayTitle}</h1>
       </div>

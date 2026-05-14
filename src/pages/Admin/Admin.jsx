@@ -1,12 +1,71 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../../supabaseClient';
 import BlogEditor from '../../components/Admin/BlogEditor';
-// If you have a separate Gallery tool, import it here too
 import GalleryEditor from '../../components/Admin/GalleryEditor';
 import ShopEditor from '../../components/Admin/ShopEditor';
 import styles from './Admin.module.css';
 
 function Admin() {
   const [activeTab, setActiveTab] = useState('blog');
+  const [user, setUser] = useState(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+
+  // 1. Check if you are already logged in when the page loads
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+    };
+    checkUser();
+
+    // Listen for login/logout changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setError(error.message);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
+  // 2. THE GATEKEEPER: If no user, show the Login Form instead of the dashboard
+  if (!user) {
+    return (
+      <div className={styles.loginWrapper}>
+        <form onSubmit={handleLogin} className={styles.loginForm}>
+          <h2>RAMWEB Admin Login</h2>
+          {error && <p className={styles.errorMessage}>{error}</p>}
+          <input
+            type="email"
+            placeholder="Admin Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit" className={styles.loginButton}>Login</button>
+        </form>
+      </div>
+    );
+  }
+
+
 
   return (
     <div className={styles.adminWrapper}>
@@ -32,6 +91,10 @@ function Admin() {
             Shop Management
           </button>
         </nav>
+        {/* Added a Logout button at the bottom of your sidebar */}
+        <button onClick={handleLogout} className={styles.logoutButton}>
+          Logout
+        </button>
       </aside>
 
       <main className={styles.workspace}>
@@ -43,7 +106,7 @@ function Admin() {
           {/* Each one only shows if the activeTab matches exactly */}
           {activeTab === 'blog' && <BlogEditor />}
           {activeTab === 'gallery' && <GalleryEditor />}
-          {activeTab === 'shop' && <div><ShopEditor/></div>}
+          {activeTab === 'shop' && <div><ShopEditor /></div>}
         </div>
       </main>
     </div>

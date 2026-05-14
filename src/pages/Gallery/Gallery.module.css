@@ -69,7 +69,6 @@
     display:none;
     justify-content: center;
     align-items: center;
-    /* overflow: auto; */
 }
 
 .lightbox-content{
@@ -80,11 +79,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-height: 80%; */
-    /* background-color: rgba(255, 0, 0, 0.445); */
 }
 
 .lightbox-content img{
@@ -93,11 +87,6 @@
     width: auto;
     height: auto;
     object-fit: contain;
-
-    /* width: 100%;
-    height: 100%;
-    border: 5px solid white;
-    object-fit: scale-down; */
 }
 .lightbox-caption {
     color: rgb(230, 222, 222);
@@ -127,41 +116,83 @@
 }
 
 /*  */
-
-
-/* Positions the 'Admin Login' button at the top */
-.adminToggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    padding: 10px;
-    z-index: 1000;
-    background: #000;
+.adminBanner {
+    margin: 0 auto;
+    max-width: 1200px;
+    background-color: #000;
     color: #fff;
-    border: none;
-    font-size: 0.6rem;
-    cursor: pointer;
-  }
-  
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Lexend Giga', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 50px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+.dashboardLink {
+    color: #5099d0; /* Or your preferred accent color */
+    text-decoration: none;
+    border: 1px solid #5099d0;
+    padding: 4px 12px;
+    transition: all 0.3s ease;
+}
+
+.dashboardLink:hover {
+    background-color: #5099d0;
+    color: #fff;
+}
+
+/* Positions the 'Admin Login' button at the top */  
   /* The Delete Button that appears on the image */
   .adminDeleteBtn {
     position: absolute;
     bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(255, 0, 0, 0.8);
+    background: #000;
     color: white;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
     z-index: 5;
+    padding: 8px 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    /* THE CHANGE: Start at 0 opacity and move down slightly */
+    opacity: 0;
+    margin-bottom: -10px; 
+    transition: all 0.3s ease; 
   }
+  /* .adminDeleteBtn:hover{
+    background: #ff4444;
+    color: white;
+    border-color: #ff4444;
+  } */
+
+  /* 2. When you hover over the IMAGE, show the button and slide it up */
+.gallery-item:hover .adminDeleteBtn {
+    opacity: 1;
+    margin-bottom: 0; /* Slides it back to its original position */
+}
+
+/* 3. Keep your red hover for the actual button click */
+.adminDeleteBtn:hover {
+    background: #ff4444;
+}
+  
   
   /* Ensure the gallery item can contain the absolute button */
   .gallery-item {
     position: relative; 
     cursor: pointer;
   }
+
+
 
 
 
