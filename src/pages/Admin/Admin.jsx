@@ -30,6 +30,7 @@ function Admin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError(null);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) setError(error.message);
   };
@@ -38,7 +39,7 @@ function Admin() {
     await supabase.auth.signOut();
   };
 
-  // 2. THE GATEKEEPER: If no user, show the Login Form instead of the dashboard
+  // 2. THE GATEKEEPER: If no user, show the clean Login Form instead of the dashboard
   if (!user) {
     return (
       <div className={styles.loginWrapper}>
@@ -64,8 +65,6 @@ function Admin() {
       </div>
     );
   }
-
-
 
   return (
     <div className={styles.adminWrapper}>

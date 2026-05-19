@@ -50,6 +50,8 @@
     opacity: 0.7;
 }
 
+
+
 .errorMessage {
     color: #ff4444;
     font-size: 0.7rem;
@@ -117,6 +119,27 @@
     font-weight: bold;
     border-bottom: 1px solid #000; /* Subtle underline for the active tab */
 }
+/* Logout button */
+.logoutButton{
+    background-color: black;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    font-family: 'Lexend Giga', sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+    border: 2px solid black;
+}
+.logoutButton:hover{
+    background-color: #333;
+    border: 2px solid red;
+}
+
+
 .header{
     margin-right: 10px;
 }
@@ -153,5 +176,11 @@
 
     .editorContainer {
         max-width: 100%; /* Use all available width on phones */
+    }
+    .logoutButton{
+        display: block;
+        width: fit-content;
+        margin: 25px auto 0 auto;
+        text-align: center;
     }
 }
