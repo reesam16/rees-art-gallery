@@ -16,7 +16,7 @@ import slide5 from '../../assets/paintings/mcw5.jpg';
 
 // ADD THESE: Import the images you want to use for the 4 boxes
 import landscapeBg from '../../assets/paintings/ncw9.jpg'; // or whatever image you want
-import stillLifeBg from '../../assets/paintings/slw4.jpg'; 
+import stillLifeBg from '../../assets/paintings/slw4.jpg';
 import portraitBg from '../../assets/paintings/pw7.jpg';   // placeholder image
 import figureBg from '../../assets/paintings/fgw1.jpg';     //
 
@@ -41,13 +41,17 @@ function Home() {
 
   useEffect(() => {
     // Check if the URL has a hash (like #gallery-section)
-    if (window.location.hash) {
-      const element = document.querySelector(window.location.hash);
-      if (element) {
-        // Give the browser a split second to render the grid, then scroll
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+    if (window.location.hash && !window.location.hash.includes('=')) {
+      try {
+        const element = document.querySelector(window.location.hash);
+        if (element) {
+          // Give the browser a split second to render the grid, then scroll
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      } catch (err) {
+        console.error("Could not scroll to element:", err);
       }
     }
   }, [window.location.hash]); // Runs once when the Home page loads
@@ -99,39 +103,39 @@ function Home() {
 
         {/* // 2. Inside the return, update the Link tags: */}
         {/* Gallery Selection Boxes */}
-  <Link
-    to="/gallery?type=landscapes"
-    className={`${styles.c2} ${styles.cont2} ${styles.heading}`}
-    style={{ backgroundImage: ` linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${landscapeBg})` }}
-  >
-    <h3>Landscape Collection</h3>
-  </Link>
+        <Link
+          to="/gallery?type=landscapes"
+          className={`${styles.c2} ${styles.cont2} ${styles.heading}`}
+          style={{ backgroundImage: ` linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${landscapeBg})` }}
+        >
+          <h3>Landscape Collection</h3>
+        </Link>
 
-  <Link
-    to="/gallery?type=still-life"
-    className={`${styles.c3} ${styles.cont3} ${styles.heading}`}
-    style={{ backgroundImage: `linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${stillLifeBg})` }}
-  >
-    <h3>Still Life</h3>
-  </Link>
+        <Link
+          to="/gallery?type=still-life"
+          className={`${styles.c3} ${styles.cont3} ${styles.heading}`}
+          style={{ backgroundImage: `linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${stillLifeBg})` }}
+        >
+          <h3>Still Life</h3>
+        </Link>
 
-  <Link
-    to="/gallery?type=portraits"
-    className={`${styles.c4} ${styles.cont4} ${styles.heading}`}
-    style={{ backgroundImage: `linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${portraitBg})` }}
-  >
-    <h3>Portraits</h3>
-  </Link>
+        <Link
+          to="/gallery?type=portraits"
+          className={`${styles.c4} ${styles.cont4} ${styles.heading}`}
+          style={{ backgroundImage: `linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${portraitBg})` }}
+        >
+          <h3>Portraits</h3>
+        </Link>
 
-  <Link
-    to="/gallery?type=figures"
-    className={`${styles.c5} ${styles.cont5} ${styles.heading}`}
-    style={{ backgroundImage: `linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${figureBg})` }}
-  >
-    <h3>Figure Collection</h3>
-  </Link>
-        </div>
-      
+        <Link
+          to="/gallery?type=figures"
+          className={`${styles.c5} ${styles.cont5} ${styles.heading}`}
+          style={{ backgroundImage: `linear-gradient(#16a0847d, transparent 80%), linear-gradient(0deg,#8080da7c, transparent 80%), url(${figureBg})` }}
+        >
+          <h3>Figure Collection</h3>
+        </Link>
+      </div>
+
     </main>
   );
 }
