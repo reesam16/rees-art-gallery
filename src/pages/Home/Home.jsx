@@ -5,20 +5,19 @@ import styles from "./Home.module.css";
 import logo from '../../assets/logo.svg';
 import heroBg from "../../assets/vcp.png";
 // Import a few slider images
-import slide1 from '../../assets/paintings/mcw1.jpg';
-import slide2 from '../../assets/paintings/mcw2.jpg';
-import slide3 from '../../assets/paintings/mcw3.jpg';
-import slide4 from '../../assets/paintings/mcw4.jpg';
-import slide5 from '../../assets/paintings/mcw5.jpg';
-// 1. Add these imports at the top
-// import card1Bg from '../../assets/paintings/ncw9.jpg';
-// import card2Bg from '../../assets/paintings/ncw12.jpg';
+import slide1 from '../../assets/mcw1.jpg';
+import slide2 from '../../assets/mcw2.jpg';
+import slide3 from '../../assets/mcw3.jpg';
+import slide4 from '../../assets/mcw4.jpg';
+import slide5 from '../../assets/mcw5.jpg';
+import artistPhoto from "../../assets/pw5.jpg";
 
-// ADD THESE: Import the images you want to use for the 4 boxes
-import landscapeBg from '../../assets/paintings/ncw9.jpg'; // or whatever image you want
-import stillLifeBg from '../../assets/paintings/slw4.jpg';
-import portraitBg from '../../assets/paintings/pw7.jpg';   // placeholder image
-import figureBg from '../../assets/paintings/fgw1.jpg';     //
+
+// THESE: Import the images you want to use for the 4 boxes
+import landscapeBg from '../../assets/ncw9.jpg'; // or whatever image you want
+import stillLifeBg from '../../assets/slw4.jpg';
+import portraitBg from '../../assets/pw7.jpg';   // placeholder image
+import figureBg from '../../assets/fgw1.jpg';     //
 
 function Home() {
   const [sliderIndex, setSliderIndex] = useState(0);
@@ -135,6 +134,23 @@ function Home() {
           <h3>Figure Collection</h3>
         </Link>
       </div>
+      <section className={styles['about-section']}>
+
+        <div className={styles['about-container']}>
+          <div className={styles['about-image-wrapper']}>
+            <img src={artistPhoto} alt="Rees Mortensen" className={styles['about-photo']} />
+          </div>
+          <div className={styles['about-text']}>
+            <h2>About Rees Mortensen</h2>
+            <p>
+              Rees found his passion while studying at the University of Tampa. Upon completion of his BA in History, he moved out to Seattle, Washington where he studied for 3 years at the Georgetown Atelier.   Merging traditional fine art with modern front-end web development, Rees builds
+              custom digital spaces alongside his physical canvas collections. He is available
+              for both artwork commissions and digital design projects—please contact for scheduling.
+            </p>
+          </div>
+        </div>
+
+      </section>
 
     </main>
   );

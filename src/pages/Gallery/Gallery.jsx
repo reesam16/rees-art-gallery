@@ -4,10 +4,10 @@ import styles from './Gallery.module.css';
 import { supabase } from '../../supabaseClient';
 import { Link } from 'react-router-dom'; // Add this for the Banner link
 
-import landscapeHero from '../../assets/paintings/ncw9.jpg';
-import stillLifeHero from '../../assets/paintings/slw1.jpg';
-import portraitHero from '../../assets/paintings/mcw2.jpg';
-import figureHero from '../../assets/paintings/fgw9.jpg';
+import landscapeHero from '../../assets/ncw9.jpg';
+import stillLifeHero from '../../assets/slw1.jpg';
+import portraitHero from '../../assets/mcw2.jpg';
+import figureHero from '../../assets/fgw9.jpg';
 import defaultHero from '../../assets/vcp-photo.jpg'; // Your fallback
 
 function Gallery() {
