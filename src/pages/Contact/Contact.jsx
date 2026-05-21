@@ -6,13 +6,13 @@ import styles from './Contact.module.css';
 function Contact() {
     const location = useLocation();
     const [formData, setFormData] = useState({
-        name: '', email: '', subject: '', message: ''
+        name: '', email: '', confirmEmail: '', subject: '', message: ''
     });
 
     const [status, setStatus] = useState({ type: '', messages: [] });
     const [isSending, setIsSending] = useState(false);
 
-     // Auto-fill from Shop URL
+    // Auto-fill from Shop URL
     useEffect(() => {
         // Check for Shop Inquiry
         const params = new URLSearchParams(location.search);
@@ -33,10 +33,11 @@ function Contact() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // YOUR CUSTOM RULES
+        // CUSTOM RULES
         const rules = [
             { isValid: formData.name.length > 2, msg: 'Please enter a name (at least 2 characters).' },
             { isValid: formData.email.includes('@') && formData.email.includes('.'), msg: 'Please enter a valid email' },
+            {isValid: formData.email.trim().toLowerCase() === formData.confirmEmail.trim().toLowerCase(),msg: 'Email addresses do not match. Please check for typos!'},
             { isValid: formData.subject.length > 2, msg: 'Subject is required.' },
             { isValid: formData.message.length >= 10, msg: 'Please use more than 10 characters.' }
             // Note: Changed from your JS comment of 50 to match the code logic of 10
@@ -51,7 +52,7 @@ function Contact() {
 
         setIsSending(true);
 
-        // Sends the form data to the EmailJS template we set up
+        // Sends the form data to the EmailJS template 
         emailjs.send(
             import.meta.env.VITE_EMAILJS_SERVICE_ID,
             import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
@@ -87,6 +88,12 @@ function Contact() {
                         <label className={styles['form-label']}>Your Email</label>
                         <input type="email" name="email" className={styles['form-input']}
                             value={formData.email} onChange={handleChange} placeholder="email@mail.com" />
+                    </div>
+
+                    <div className={styles['form-group']}>
+                        <label className={styles['form-label']}>Confirm Your Email</label>
+                        <input type="email" name="confirmEmail" className={styles['form-input']}
+                            value={formData.confirmEmail} onChange={handleChange} placeholder="email@mail.com" />
                     </div>
 
                     <div className={styles['form-group']}>
