@@ -161,6 +161,8 @@
   background-color: #f7f2e8; /* Matches your warm background tones */
   padding: 60px 20px;
   width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .about-container {
@@ -191,7 +193,8 @@
 }
 
 .about-text h2 {
-  font-family: serif; /* Gives it an elegant artist-profile feel */
+  font-family: "Funnel Sans", sans-serif; /* Gives it an elegant artist-profile feel */
+  font-weight: 100;
   font-size: 2rem;
   margin-bottom: 15px;
   color: #333;

@@ -16,7 +16,7 @@ function Gallery() {
   const [isAdmin, setIsAdmin] = useState(false); 
   const [searchParams] = useSearchParams();
 
-  // 1. Grab the current URL location
+  // Grab the current URL location
   const location = useLocation();
   // GET THE TYPE FIRST
   const type = searchParams.get('type');
@@ -40,7 +40,7 @@ function Gallery() {
   // Fallback to 'Full Gallery' if no type is selected
   const displayTitle = titleMap[type] || 'Full Gallery';
 
-  // 1. Updated load logic to talk to the Cloud
+  // Updated load logic to talk to the Cloud
   const loadPaintings = async () => {
     // Get the type from the URL (e.g., landscapes)
     const typeFilter = searchParams.get('type');
@@ -74,7 +74,7 @@ function Gallery() {
   }, [location.search]);
   
 
-  // Delete logic - Same as Blog's handleDelete
+  // Delete logic 
   const handleDelete = async (e, id) => {
     e.stopPropagation();
     const { error } = await supabase.from('gallery_paintings').delete().eq('id', id);
@@ -170,9 +170,7 @@ function Gallery() {
               )}
             </div>
           )
-
         }
-
         )}
       </div>
     </main>
