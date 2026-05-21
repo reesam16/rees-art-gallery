@@ -81,3 +81,28 @@
     border-radius: 5px;
     text-align: left;
 }
+
+
+/* --- MOBILE LAYOUT ADJUSTMENTS --- */
+@media (max-width: 576px) {
+    .form-outer-container {
+        max-width: 100%;  
+        padding: 1em 0.5em; 
+    }
+
+    .form-container {
+        padding: 1.5em 1em; 
+        border-radius: 8px;
+    }
+
+    .button-container {
+        flex-direction: column; 
+        width: 100%;
+    }
+
+    .submit-button, .clear-button {
+        width: 100%; 
+        padding: 1em; 
+        text-align: center;
+    }
+}
