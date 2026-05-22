@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import styles from './Footer.module.css';
+import { FaInstagram, FaEtsy } from 'react-icons/fa';
 
 function Footer() {
 
@@ -21,6 +22,26 @@ function Footer() {
         <li><NavLink to="/admin">admin</NavLink></li>
         <li><NavLink to="/contact">Contact</NavLink></li>
         <li><NavLink to="/shop">shop</NavLink></li>
+        <li>
+          <a 
+            href="https://www.instagram.com/reesmortensen" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className={styles.footerLink}
+          >
+            <FaInstagram size={22} /> 
+          </a>
+        </li>
+        <li>
+          <a 
+            href="https://www.etsy.com/shop/ReesMortensen" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className={styles.footerLink}
+          >
+            <FaEtsy size={22} /> 
+          </a>
+        </li>
       </ul>
     </footer>
   );
