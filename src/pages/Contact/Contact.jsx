@@ -61,7 +61,7 @@ function Contact() {
         )
             .then(() => {
                 setStatus({ type: 'success', messages: ["Success! Your inquiry has been sent to Rees."] });
-                setFormData({ name: '', email: '', subject: '', message: '' });
+                setFormData({ name: '', email: '', confirmEmail: '', subject: '', message: '' });
             })
             .catch((error) => {
                 console.error('EmailJS Error:', error);
