@@ -55,6 +55,7 @@
 
 .content p {
     margin-bottom: 1.5em;
+    white-space: pre-line;
 }
 
 /* --- Mobile View --- */

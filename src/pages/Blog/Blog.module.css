@@ -42,7 +42,7 @@
 }
 
 .postContent {
-    flex: 1;
+    flex: 1; 
     /* Takes up 50% */
 }
 
@@ -62,6 +62,7 @@
 
 .postContent p {
     font-family: "Funnel Sans", sans-serif;
+    white-space: pre-line;
     line-height: 1.6;
     color: #444;
 }
